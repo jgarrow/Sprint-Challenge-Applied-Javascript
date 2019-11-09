@@ -17,3 +17,68 @@
     <div class="right-button"> > </div>
   </div>
 */
+
+function Carousel() {
+  const carousel = document.createElement('div');
+  const leftBtn = document.createElement('div');
+  const rightBtn = document.createElement('div');
+  // const mountains = document.createElement('img');
+  // const computer = document.createElement('img');
+  // const trees = document.createElement('img');
+  // const turntable = document.createElement('img');
+
+  carousel.classList.add('carousel');
+  leftBtn.classList.add('left-button');
+  rightBtn.classList.add('right-button');
+
+  // mountains.src = './assets/carousel/mountains.jpeg';
+  // computer.src = './assets/carousel/computer.jpeg';
+  // trees.src = './assets/carousel/trees.jpeg';
+  // turntable.src = './assets/carousel/turntable.jpeg';
+
+  carousel.appendChild(leftBtn);
+  // carousel.appendChild(mountains);
+  // carousel.appendChild(computer);
+  // carousel.appendChild(trees);
+  // carousel.appendChild(turntable);
+  
+
+
+  // get images
+  let request = new XMLHttpRequest();
+  request.responseType = 'document';
+  request.open('GET', '/assets/carousel', true);
+
+  request.onload = function() {
+    console.log(request);
+    console.log(this.status)
+    if (this.status >= 200 && this.status < 400) {
+      let resp = this.response;
+      console.log('here');
+      console.log(resp);
+      let images = resp.getElementsByTagName('a');
+      for (x of images) {
+        if (x.href.match(/\.(jpe?g|png|gif)$/)) {
+          console.log(x.href);
+          let source = x.href.replace('http://127.0.0.1:5500/', './');
+          console.log(source);
+          let img = document.createElement('img');
+          img.src = source;
+          carousel.appendChild(img);
+        }
+      }
+
+    } else {
+      alert('There was an error. There might not be any images to display. Request returned status of ' + request.status);
+    }
+  };
+
+  request.send();
+
+  carousel.appendChild(rightBtn);
+
+  return carousel;
+}
+
+const carouselContainer = document.querySelector('.carousel-container');
+carouselContainer.appendChild(Carousel());
