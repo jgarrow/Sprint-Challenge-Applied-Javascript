@@ -56,49 +56,45 @@ function Carousel() {
 		const numOfImages = carouselImages.length;
 		console.log(numOfImages);
 
-		//   initalize image positions
+		//   initalize image displays
 		carouselImages[0].style.display = "block";
-		// carouselImages.forEach((image, index) => {
-			// image.style.display = 'block';
-			// image.style.position = "relative";
-
-		// 	leftBtn.addEventListener('click', () => {
-		// 		if (carouselImages[0].style.display === 'block') {
-		// 			carouselImages[carouselImages.length - 1].style.display = 'block';
-		// 			carouselImages[0].style.display = 'none';
-		// 		} else if (image.style.display === 'block') {
-
-		// 		}
-		// 	})
-		// });
 	  
-		for (let i = 0; i < numOfImages; i++) {
+		carouselImages.forEach((image, i) => {
+			let displayedIndex = 0;
 			leftBtn.addEventListener('click', () => {
-				if (carouselImages[i].style.display === 'block') {
-					carouselImages[i].style.display = 'none';
-					console.log(carouselImages[i])
-					
-					// if the 'last' image is displayed, the 'first' one should now be displayed
-					if (i === numOfImages - 1) {
+				if (image.style.display === 'block') {
+					displayedIndex = carouselImages.indexOf(image);
+					console.log('Displayed index: ', displayedIndex);
+					console.log(image);
+					image.style.display = 'none';
+
+					if (displayedIndex === carouselImages.length - 1) {
 						carouselImages[0].style.display = 'block';
-						
 					} else {
 						carouselImages[i + 1].style.display = 'block';
-						
+						console.log('Image: ', image);
+						console.log('CarouselImages[i]: ', carouselImages[i]);
 					}
-
-				}
+				} 
 			})
 
-			// rightBtn.addEventListener('click', () => {
-			// 	if (carouselImages[i].style.display === 'block') {
-			// 		carouselImages[i - 1].style.display = 'block';
-			// 		carouselImages[i].style.display = 'none';
-					
+			rightBtn.addEventListener('click', () => {
+				if (image.style.display === 'block') {
+					displayedIndex = carouselImages.indexOf(image);
+					console.log('Displayed index: ', displayedIndex);
+					console.log(image);
+					image.style.display = 'none';
 
-			// 	}
-			// })
-		}
+					if (displayedIndex === 0) {
+						carouselImages[carouselImages.length - 1].style.display = 'block';
+					} else {
+						carouselImages[i - 1].style.display = 'block';
+						console.log('Image: ', image);
+						console.log('CarouselImages[i]: ', carouselImages[i]);
+					}
+				}
+			})
+		})
 
     } else {
       alert(
