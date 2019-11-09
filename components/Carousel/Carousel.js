@@ -17,3 +17,109 @@
     <div class="right-button"> > </div>
   </div>
 */
+
+// array of carousel images
+const carouselImages = [];
+
+function Carousel() {
+  const carousel = document.createElement("div");
+  const leftBtn = document.createElement("div");
+  const rightBtn = document.createElement("div");
+
+  carousel.classList.add("carousel");
+  leftBtn.classList.add("left-button");
+  rightBtn.classList.add("right-button");
+
+  carousel.appendChild(leftBtn);
+
+  // get all images and append them to carousel (this method works even if more images get added/removed to the folder and we don't know it)
+  let request = new XMLHttpRequest();
+  request.responseType = "document";
+  request.open("GET", "/assets/carousel", true);
+
+  request.onload = function() {
+    if (this.status >= 200 && this.status < 400) {
+      	let resp = this.response;
+      	let images = resp.getElementsByTagName("a");
+		for (x of images) {
+			if (x.href.match(/\.(jpe?g|png|gif)$/)) {
+				// it was adding my live server stuff to the beginning, so we need to get rid of that for the image src
+				let source = x.href.replace("http://127.0.0.1:5500/", "./");
+				let img = document.createElement("img");
+				img.src = source;
+				carouselImages.push(img);
+				carousel.appendChild(img);
+			}
+		}
+
+		console.log(carouselImages);
+		const numOfImages = carouselImages.length;
+		console.log(numOfImages);
+
+		//   initalize image displays
+		carouselImages[0].style.display = "block";
+	  
+		carouselImages.forEach((image, i) => {
+			let displayedIndex = 0;
+			leftBtn.addEventListener('click', () => {
+				if (image.style.display === 'block') {
+					displayedIndex = carouselImages.indexOf(image);
+					console.log('Displayed index: ', displayedIndex);
+					console.log(image);
+					image.style.display = 'none';
+
+					if (displayedIndex === carouselImages.length - 1) {
+						carouselImages[0].style.display = 'block';
+					} else {
+						carouselImages[i + 1].style.display = 'block';
+						console.log('Image: ', image);
+						console.log('CarouselImages[i]: ', carouselImages[i]);
+					}
+				} 
+			})
+
+			rightBtn.addEventListener('click', () => {
+				if (image.style.display === 'block') {
+					displayedIndex = carouselImages.indexOf(image);
+					console.log('Displayed index: ', displayedIndex);
+					console.log(image);
+					image.style.display = 'none';
+
+					if (displayedIndex === 0) {
+						carouselImages[carouselImages.length - 1].style.display = 'block';
+					} else {
+						carouselImages[i - 1].style.display = 'block';
+						console.log('Image: ', image);
+						console.log('CarouselImages[i]: ', carouselImages[i]);
+					}
+				}
+			})
+		})
+
+    } else {
+      alert(
+        "There was an error. There might not be any images to display. Request returned status of " + request.status
+      );
+    }
+  };
+
+  request.send();
+
+  carousel.appendChild(rightBtn);
+
+  return carousel;
+}
+
+const carouselContainer = document.querySelector(".carousel-container");
+carouselContainer.appendChild(Carousel());
+
+// console.log(carouselImages);
+
+// carouselImages[0].style.display = 'block';
+
+// set index of first image to 1
+// set index of other images to 2, 3, 4, etc.
+// if index === 1 --> display: block
+// else --> display: none
+// if rightBtn is clicked --> index of current = last index num, index of others = -1
+// if leftBtn is clicked --> index of last = 1, index of rest = +1
