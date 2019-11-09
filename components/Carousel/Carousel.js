@@ -18,58 +18,92 @@
   </div>
 */
 
+// array of carousel images
+const carouselImages = [];
+
 function Carousel() {
-  const carousel = document.createElement('div');
-  const leftBtn = document.createElement('div');
-  const rightBtn = document.createElement('div');
-  // const mountains = document.createElement('img');
-  // const computer = document.createElement('img');
-  // const trees = document.createElement('img');
-  // const turntable = document.createElement('img');
+  const carousel = document.createElement("div");
+  const leftBtn = document.createElement("div");
+  const rightBtn = document.createElement("div");
 
-  carousel.classList.add('carousel');
-  leftBtn.classList.add('left-button');
-  rightBtn.classList.add('right-button');
-
-  // mountains.src = './assets/carousel/mountains.jpeg';
-  // computer.src = './assets/carousel/computer.jpeg';
-  // trees.src = './assets/carousel/trees.jpeg';
-  // turntable.src = './assets/carousel/turntable.jpeg';
+  carousel.classList.add("carousel");
+  leftBtn.classList.add("left-button");
+  rightBtn.classList.add("right-button");
 
   carousel.appendChild(leftBtn);
-  // carousel.appendChild(mountains);
-  // carousel.appendChild(computer);
-  // carousel.appendChild(trees);
-  // carousel.appendChild(turntable);
-  
 
-
-  // get images
+  // get all images and append them to carousel (this method works even if more images get added/removed to the folder and we don't know it)
   let request = new XMLHttpRequest();
-  request.responseType = 'document';
-  request.open('GET', '/assets/carousel', true);
+  request.responseType = "document";
+  request.open("GET", "/assets/carousel", true);
 
   request.onload = function() {
-    console.log(request);
-    console.log(this.status)
     if (this.status >= 200 && this.status < 400) {
-      let resp = this.response;
-      console.log('here');
-      console.log(resp);
-      let images = resp.getElementsByTagName('a');
-      for (x of images) {
-        if (x.href.match(/\.(jpe?g|png|gif)$/)) {
-          console.log(x.href);
-          let source = x.href.replace('http://127.0.0.1:5500/', './');
-          console.log(source);
-          let img = document.createElement('img');
-          img.src = source;
-          carousel.appendChild(img);
-        }
-      }
+      	let resp = this.response;
+      	let images = resp.getElementsByTagName("a");
+		for (x of images) {
+			if (x.href.match(/\.(jpe?g|png|gif)$/)) {
+				// it was adding my live server stuff to the beginning, so we need to get rid of that for the image src
+				let source = x.href.replace("http://127.0.0.1:5500/", "./");
+				let img = document.createElement("img");
+				img.src = source;
+				carouselImages.push(img);
+				carousel.appendChild(img);
+			}
+		}
+
+		console.log(carouselImages);
+		const numOfImages = carouselImages.length;
+		console.log(numOfImages);
+
+		//   initalize image positions
+		carouselImages[0].style.display = "block";
+		// carouselImages.forEach((image, index) => {
+			// image.style.display = 'block';
+			// image.style.position = "relative";
+
+		// 	leftBtn.addEventListener('click', () => {
+		// 		if (carouselImages[0].style.display === 'block') {
+		// 			carouselImages[carouselImages.length - 1].style.display = 'block';
+		// 			carouselImages[0].style.display = 'none';
+		// 		} else if (image.style.display === 'block') {
+
+		// 		}
+		// 	})
+		// });
+	  
+		for (let i = 0; i < numOfImages; i++) {
+			leftBtn.addEventListener('click', () => {
+				if (carouselImages[i].style.display === 'block') {
+					carouselImages[i].style.display = 'none';
+					console.log(carouselImages[i])
+					
+					// if the 'last' image is displayed, the 'first' one should now be displayed
+					if (i === numOfImages - 1) {
+						carouselImages[0].style.display = 'block';
+						
+					} else {
+						carouselImages[i + 1].style.display = 'block';
+						
+					}
+
+				}
+			})
+
+			// rightBtn.addEventListener('click', () => {
+			// 	if (carouselImages[i].style.display === 'block') {
+			// 		carouselImages[i - 1].style.display = 'block';
+			// 		carouselImages[i].style.display = 'none';
+					
+
+			// 	}
+			// })
+		}
 
     } else {
-      alert('There was an error. There might not be any images to display. Request returned status of ' + request.status);
+      alert(
+        "There was an error. There might not be any images to display. Request returned status of " + request.status
+      );
     }
   };
 
@@ -80,5 +114,16 @@ function Carousel() {
   return carousel;
 }
 
-const carouselContainer = document.querySelector('.carousel-container');
+const carouselContainer = document.querySelector(".carousel-container");
 carouselContainer.appendChild(Carousel());
+
+// console.log(carouselImages);
+
+// carouselImages[0].style.display = 'block';
+
+// set index of first image to 1
+// set index of other images to 2, 3, 4, etc.
+// if index === 1 --> display: block
+// else --> display: none
+// if rightBtn is clicked --> index of current = last index num, index of others = -1
+// if leftBtn is clicked --> index of last = 1, index of rest = +1
